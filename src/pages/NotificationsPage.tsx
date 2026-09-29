@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageCircle, UserPlus, AtSign, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';

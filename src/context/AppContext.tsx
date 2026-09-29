@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { Post, Comment, User, currentUser, posts as initialPosts, users as initialUsers, comments as initialComments, notifications as initialNotifications, messages as initialMessages, Notification, Message } from '../data/mockData';
 
 interface AppState {

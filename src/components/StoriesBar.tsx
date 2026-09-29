@@ -1,4 +1,3 @@
-import React from 'react';
 import { stories as initialStories } from '../data/mockData';
 import { Plus } from 'lucide-react';
 

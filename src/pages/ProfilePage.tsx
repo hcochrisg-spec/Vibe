@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Settings, Grid3X3, Bookmark, Film, Heart, ChevronDown, UserPlus, MessageCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';

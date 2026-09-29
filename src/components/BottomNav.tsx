@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Search, PlusSquare, Heart, User } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -16,6 +15,11 @@ export default function BottomNav() {
     { path: '/notifications', icon: Heart, label: 'Activity' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
+
+  // Hide nav on messages/chat pages
+  if (location.pathname === '/messages') {
+    return null;
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-lg border-t border-dark-border">

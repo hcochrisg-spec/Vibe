@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
@@ -9,10 +8,7 @@ import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
 import MessagesPage from './pages/MessagesPage';
 
-function AppContent() {
-  const location = useLocation();
-  const isMessagesChat = location.pathname === '/messages';
-
+function AppLayout() {
   return (
     <div className="h-full w-full max-w-lg mx-auto relative bg-black overflow-hidden">
       <Routes>
@@ -24,7 +20,7 @@ function AppContent() {
         <Route path="/profile/:userId" element={<ProfilePage />} />
         <Route path="/messages" element={<MessagesPage />} />
       </Routes>
-      {!isMessagesChat && <BottomNav />}
+      <BottomNav />
     </div>
   );
 }
@@ -33,7 +29,7 @@ export default function App() {
   return (
     <HashRouter>
       <AppProvider>
-        <AppContent />
+        <AppLayout />
       </AppProvider>
     </HashRouter>
   );

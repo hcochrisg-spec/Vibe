@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Video, Image, Music, MapPin, Tag, X, ChevronDown, Sparkles, Users } from 'lucide-react';
 import { useApp } from '../context/AppContext';

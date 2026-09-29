@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Search, TrendingUp, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { explorePosts, trendingTags, users } from '../data/mockData';

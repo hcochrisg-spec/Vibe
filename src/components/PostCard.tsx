@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Heart, MessageCircle, Send, Bookmark, Music, MoreHorizontal, Play } from 'lucide-react';
 import { Post } from '../data/mockData';
 import { useApp } from '../context/AppContext';
