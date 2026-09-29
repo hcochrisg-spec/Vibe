@@ -10,16 +10,18 @@ import MessagesPage from './pages/MessagesPage';
 
 function AppLayout() {
   return (
-    <div className="h-full w-full max-w-lg mx-auto relative bg-black overflow-hidden">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/create" element={<CreatePage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/:userId" element={<ProfilePage />} />
-        <Route path="/messages" element={<MessagesPage />} />
-      </Routes>
+    <div className="h-full w-full max-w-lg mx-auto relative bg-black">
+      <div className="h-full pb-16">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/explore" element={<ExplorePage />} />
+          <Route path="/create" element={<CreatePage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:userId" element={<ProfilePage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+        </Routes>
+      </div>
       <BottomNav />
     </div>
   );

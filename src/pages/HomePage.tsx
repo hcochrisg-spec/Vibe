@@ -11,12 +11,11 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'following' | 'foryou'>('foryou');
   const [commentsOpen, setCommentsOpen] = useState(false);
-  
 
   return (
     <div className="h-full flex flex-col bg-black">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3">
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 pt-3 pb-2 bg-gradient-to-b from-black/80 to-transparent">
         <Logo />
         <button
           onClick={() => navigate('/messages')}
@@ -27,7 +26,7 @@ export default function HomePage() {
       </div>
 
       {/* Tabs */}
-      <div className="absolute top-12 left-0 right-0 z-30 flex items-center justify-center gap-6">
+      <div className="absolute top-12 left-0 right-0 z-30 flex items-center justify-center gap-6 bg-gradient-to-b from-black/60 to-transparent pb-4">
         <button
           onClick={() => setActiveTab('following')}
           className={`text-base font-semibold transition-colors ${
@@ -48,11 +47,9 @@ export default function HomePage() {
       </div>
 
       {/* Feed */}
-      <div
-        className="flex-1 overflow-y-auto snap-feed hide-scrollbar"
-      >
+      <div className="flex-1 overflow-y-auto snap-y snap-mandatory">
         {posts.map(post => (
-          <div key={post.id} className="h-full w-full">
+          <div key={post.id} className="w-full snap-start snap-always">
             <PostCard
               post={post}
               onCommentOpen={() => setCommentsOpen(true)}

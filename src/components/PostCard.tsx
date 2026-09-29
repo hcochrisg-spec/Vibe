@@ -32,10 +32,10 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
 
   if (isFeedView) {
     return (
-      <div className="h-full w-full relative snap-start">
+      <div className="relative w-full h-full bg-gradient-to-br from-purple-900 via-black to-pink-900">
         {/* Background */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center cursor-pointer"
           style={{ backgroundImage: `url(${post.mediaUrl})` }}
           onDoubleClick={handleDoubleTap}
         >

@@ -44,13 +44,22 @@ html, body, #root {
 }
 
 /* Snap scroll for feed */
-.snap-feed {
+.snap-y {
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
 }
 
-.snap-feed > * {
+.snap-start {
   scroll-snap-align: start;
+}
+
+.snap-always {
+  scroll-snap-stop: always;
+}
+
+/* Feed items should fill the container */
+.snap-y > * {
+  min-height: 100%;
 }
 
 /* Gradient animations */
