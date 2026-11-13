@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import { Search, TrendingUp, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { explorePosts, trendingTags, users } from '../data/mockData';
+import { trendingTags } from '../data/mockData';
 import { useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import CommentsModal from '../components/CommentsModal';
 
 export default function ExplorePage() {
-  const { toggleFollow } = useApp();
+  const { toggleFollow, users, posts } = useApp();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'top' | 'accounts' | 'tags'>('top');
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsPostId, setCommentsPostId] = useState<string | null>(null);
   const [showSearch, setShowSearch] = useState(false);
 
   const filteredUsers = searchQuery
@@ -22,7 +22,7 @@ export default function ExplorePage() {
     : [];
 
   const filteredPosts = searchQuery
-    ? explorePosts.filter(p =>
+    ? posts.filter(p =>
         p.caption.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
       )
@@ -111,7 +111,7 @@ export default function ExplorePage() {
           {filteredPosts.length > 0 && (
             <div className="space-y-4">
               {filteredPosts.map(post => (
-                <PostCard key={post.id} post={post} onCommentOpen={() => setCommentsOpen(true)} />
+                <PostCard key={post.id} post={post} onCommentOpen={setCommentsPostId} />
               ))}
             </div>
           )}
@@ -206,11 +206,11 @@ export default function ExplorePage() {
           {/* Grid */}
           {activeTab === 'top' && (
             <div className="grid grid-cols-3 gap-0.5 px-0.5 mt-2">
-              {explorePosts.map(post => (
+              {posts.map(post => (
                 <div
                   key={post.id}
                   className="aspect-square relative cursor-pointer group"
-                  onClick={() => setCommentsOpen(true)}
+                  onClick={() => setCommentsPostId(post.id)}
                 >
                   <img
                     src={post.mediaUrl}
@@ -231,7 +231,11 @@ export default function ExplorePage() {
         </div>
       )}
 
-      <CommentsModal isOpen={commentsOpen} onClose={() => setCommentsOpen(false)} />
+      <CommentsModal
+        isOpen={commentsPostId !== null}
+        postId={commentsPostId}
+        onClose={() => setCommentsPostId(null)}
+      />
     </div>
   );
 }

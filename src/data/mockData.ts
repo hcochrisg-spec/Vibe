@@ -13,7 +13,7 @@ export interface User {
 
 export interface Post {
   id: string;
-  user: User;
+  userId: string;
   type: 'video' | 'image';
   mediaUrl: string;
   thumbnailUrl?: string;
@@ -31,13 +31,14 @@ export interface Post {
 
 export interface Story {
   id: string;
-  user: User;
+  userId: string;
   isViewed: boolean;
 }
 
 export interface Comment {
   id: string;
-  user: User;
+  postId: string;
+  userId: string;
   text: string;
   likes: number;
   isLiked: boolean;
@@ -48,7 +49,7 @@ export interface Comment {
 export interface Notification {
   id: string;
   type: 'like' | 'comment' | 'follow' | 'mention';
-  user: User;
+  userId: string;
   text: string;
   postThumbnail?: string;
   createdAt: string;
@@ -57,10 +58,17 @@ export interface Notification {
 
 export interface Message {
   id: string;
-  user: User;
+  userId: string;
   lastMessage: string;
   timestamp: string;
   unread: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  text: string;
+  fromMe: boolean;
+  time: string;
 }
 
 const avatarColors = ['#fe2c55', '#25f4ee', '#7c3aed', '#f59e0b', '#10b981', '#ec4899', '#6366f1', '#ef4444'];
@@ -122,109 +130,147 @@ const imageUrls = [
 
 export const posts: Post[] = [
   {
-    id: '1', user: users[0], type: 'video', mediaUrl: videoThumbnails[0], thumbnailUrl: videoThumbnails[0],
+    id: '1', userId: '1', type: 'video', mediaUrl: videoThumbnails[0], thumbnailUrl: videoThumbnails[0],
     caption: 'New dance challenge! 🔥 Who can do this? #dance #challenge #viral',
     music: '♪ Original Sound - dance_queen', likes: 45200, comments: 1230, shares: 5600, saves: 8900,
     isLiked: false, isSaved: false, createdAt: '2h ago', tags: ['dance', 'challenge', 'viral']
   },
   {
-    id: '2', user: users[1], type: 'image', mediaUrl: imageUrls[0],
+    id: '2', userId: '2', type: 'image', mediaUrl: imageUrls[0],
     caption: 'Best ramen in Tokyo 🍜 Recipe in bio! #food #tokyo #ramen',
     likes: 12300, comments: 456, shares: 890, saves: 3400,
     isLiked: true, isSaved: false, createdAt: '4h ago', tags: ['food', 'tokyo', 'ramen']
   },
   {
-    id: '3', user: users[2], type: 'video', mediaUrl: videoThumbnails[2], thumbnailUrl: videoThumbnails[2],
+    id: '3', userId: '3', type: 'video', mediaUrl: videoThumbnails[2], thumbnailUrl: videoThumbnails[2],
     caption: 'Sunset in Bali hits different 🌅 #travel #bali #sunset #paradise',
     music: '♪ Sunflower - Post Malone', likes: 89000, comments: 2340, shares: 12000, saves: 15600,
     isLiked: false, isSaved: true, createdAt: '6h ago', tags: ['travel', 'bali', 'sunset']
   },
   {
-    id: '4', user: users[3], type: 'image', mediaUrl: imageUrls[1],
+    id: '4', userId: '4', type: 'image', mediaUrl: imageUrls[1],
     caption: 'Leg day done! 💪 Full workout routine on my profile #fitness #gym #workout',
     likes: 23400, comments: 780, shares: 1200, saves: 5600,
     isLiked: false, isSaved: false, createdAt: '8h ago', tags: ['fitness', 'gym', 'workout']
   },
   {
-    id: '5', user: users[4], type: 'image', mediaUrl: imageUrls[2],
+    id: '5', userId: '5', type: 'image', mediaUrl: imageUrls[2],
     caption: 'New digital art piece ✨ Took me 40 hours! #art #digital #creative',
     likes: 67800, comments: 1560, shares: 8900, saves: 12300,
     isLiked: true, isSaved: true, createdAt: '12h ago', tags: ['art', 'digital', 'creative']
   },
   {
-    id: '6', user: users[5], type: 'video', mediaUrl: videoThumbnails[5], thumbnailUrl: videoThumbnails[5],
+    id: '6', userId: '6', type: 'video', mediaUrl: videoThumbnails[5], thumbnailUrl: videoThumbnails[5],
     caption: 'POV: Your mom calls you by your full name 😂 #comedy #funny #relatable',
     music: '♪ Oh No - Kreepa', likes: 234000, comments: 8900, shares: 45000, saves: 23000,
     isLiked: false, isSaved: false, createdAt: '1d ago', tags: ['comedy', 'funny', 'relatable']
   },
   {
-    id: '7', user: users[6], type: 'image', mediaUrl: imageUrls[3],
+    id: '7', userId: '7', type: 'image', mediaUrl: imageUrls[3],
     caption: 'New single dropping Friday! 🎵 Pre-save link in bio #music #newsingle #indie',
     likes: 45600, comments: 2100, shares: 6700, saves: 9800,
     isLiked: false, isSaved: false, createdAt: '1d ago', tags: ['music', 'newsingle', 'indie']
   },
   {
-    id: '8', user: users[7], type: 'video', mediaUrl: videoThumbnails[7], thumbnailUrl: videoThumbnails[7],
+    id: '8', userId: '8', type: 'video', mediaUrl: videoThumbnails[7], thumbnailUrl: videoThumbnails[7],
     caption: 'iPhone 16 Pro review - Is it worth it? 📱 #tech #review #apple',
     music: '♪ Tech Beats - sam_tech', likes: 34500, comments: 1890, shares: 4500, saves: 7800,
     isLiked: false, isSaved: false, createdAt: '2d ago', tags: ['tech', 'review', 'apple']
   },
+  { id: '9', userId: '1', type: 'image', mediaUrl: imageUrls[4], caption: 'Beach vibes 🏖️', likes: 34500, comments: 890, shares: 2300, saves: 5600, isLiked: false, isSaved: false, createdAt: '3d ago', tags: ['beach', 'summer'] },
+  { id: '10', userId: '4', type: 'image', mediaUrl: imageUrls[5], caption: 'Morning routine ☀️', likes: 12300, comments: 456, shares: 890, saves: 3400, isLiked: false, isSaved: false, createdAt: '3d ago', tags: ['morning', 'routine'] },
+  { id: '11', userId: '6', type: 'image', mediaUrl: imageUrls[6], caption: 'New look! 💇', likes: 89000, comments: 3400, shares: 12000, saves: 8900, isLiked: false, isSaved: false, createdAt: '4d ago', tags: ['fashion', 'style'] },
+  { id: '12', userId: '8', type: 'image', mediaUrl: imageUrls[7], caption: 'Setup tour 2024 🖥️', likes: 45600, comments: 1200, shares: 5600, saves: 7800, isLiked: false, isSaved: false, createdAt: '4d ago', tags: ['setup', 'tech'] },
+  { id: '13', userId: '2', type: 'image', mediaUrl: imageUrls[8], caption: 'Street food adventure 🌮', likes: 23400, comments: 780, shares: 1200, saves: 4500, isLiked: false, isSaved: false, createdAt: '5d ago', tags: ['streetfood', 'adventure'] },
+  { id: '14', userId: '5', type: 'image', mediaUrl: imageUrls[9], caption: 'Process video 🎬', likes: 67800, comments: 2100, shares: 8900, saves: 12300, isLiked: false, isSaved: false, createdAt: '5d ago', tags: ['process', 'art'] },
+  { id: '15', userId: '7', type: 'image', mediaUrl: imageUrls[10], caption: 'Behind the scenes 🎤', likes: 34500, comments: 890, shares: 4500, saves: 6700, isLiked: false, isSaved: false, createdAt: '6d ago', tags: ['bts', 'music'] },
+  { id: '16', userId: '3', type: 'image', mediaUrl: imageUrls[11], caption: 'Mountain views 🏔️', likes: 123000, comments: 4500, shares: 23000, saves: 34000, isLiked: false, isSaved: false, createdAt: '6d ago', tags: ['mountains', 'nature'] },
+  {
+    id: '17', userId: 'current', type: 'image', mediaUrl: videoThumbnails[1],
+    caption: 'Behind the scenes of today\'s shoot 🎬 #creator #bts',
+    likes: 1820, comments: 0, shares: 120, saves: 340,
+    isLiked: false, isSaved: false, createdAt: '5h ago', tags: ['creator', 'bts']
+  },
+  {
+    id: '18', userId: 'current', type: 'image', mediaUrl: videoThumbnails[4],
+    caption: 'Late night editing session ✨ #artist #process',
+    likes: 940, comments: 0, shares: 60, saves: 180,
+    isLiked: false, isSaved: false, createdAt: '9h ago', tags: ['artist', 'process']
+  },
 ];
 
 export const stories: Story[] = [
-  { id: '1', user: currentUser, isViewed: false },
-  { id: '2', user: users[0], isViewed: false },
-  { id: '3', user: users[2], isViewed: false },
-  { id: '4', user: users[4], isViewed: true },
-  { id: '5', user: users[5], isViewed: false },
-  { id: '6', user: users[6], isViewed: true },
-  { id: '7', user: users[1], isViewed: false },
-  { id: '8', user: users[3], isViewed: true },
-  { id: '9', user: users[7], isViewed: false },
+  { id: '1', userId: 'current', isViewed: false },
+  { id: '2', userId: '1', isViewed: false },
+  { id: '3', userId: '3', isViewed: false },
+  { id: '4', userId: '5', isViewed: true },
+  { id: '5', userId: '6', isViewed: false },
+  { id: '6', userId: '7', isViewed: true },
+  { id: '7', userId: '2', isViewed: false },
+  { id: '8', userId: '4', isViewed: true },
+  { id: '9', userId: '8', isViewed: false },
 ];
 
 export const comments: Comment[] = [
-  { id: '1', user: users[1], text: 'This is amazing! 🔥', likes: 234, isLiked: false, createdAt: '1h ago' },
-  { id: '2', user: users[2], text: 'How do you do this?? 😍', likes: 89, isLiked: true, createdAt: '2h ago' },
-  { id: '3', user: users[3], text: 'Tutorial please!! 🙏', likes: 456, isLiked: false, createdAt: '3h ago' },
-  { id: '4', user: users[4], text: 'Obsessed with this 💕', likes: 123, isLiked: false, createdAt: '4h ago' },
-  { id: '5', user: users[5], text: 'Made my day 😂', likes: 67, isLiked: true, createdAt: '5h ago' },
-  { id: '6', user: users[6], text: 'Need this in my life!', likes: 345, isLiked: false, createdAt: '6h ago' },
-  { id: '7', user: users[7], text: 'Sharing this with everyone', likes: 78, isLiked: false, createdAt: '7h ago' },
-  { id: '8', user: users[0], text: 'Collab soon? 👀', likes: 890, isLiked: false, createdAt: '8h ago' },
+  { id: '1', postId: '1', userId: '2', text: 'This is amazing! 🔥', likes: 234, isLiked: false, createdAt: '1h ago' },
+  { id: '2', postId: '2', userId: '3', text: 'How do you do this?? 😍', likes: 89, isLiked: true, createdAt: '2h ago' },
+  { id: '3', postId: '3', userId: '4', text: 'Tutorial please!! 🙏', likes: 456, isLiked: false, createdAt: '3h ago' },
+  { id: '4', postId: '4', userId: '5', text: 'Obsessed with this 💕', likes: 123, isLiked: false, createdAt: '4h ago' },
+  { id: '5', postId: '5', userId: '6', text: 'Made my day 😂', likes: 67, isLiked: true, createdAt: '5h ago' },
+  { id: '6', postId: '6', userId: '7', text: 'Need this in my life!', likes: 345, isLiked: false, createdAt: '6h ago' },
+  { id: '7', postId: '7', userId: '8', text: 'Sharing this with everyone', likes: 78, isLiked: false, createdAt: '7h ago' },
+  { id: '8', postId: '8', userId: '1', text: 'Collab soon? 👀', likes: 890, isLiked: false, createdAt: '8h ago' },
 ];
 
 export const notifications: Notification[] = [
-  { id: '1', type: 'like', user: users[0], text: 'liked your post', postThumbnail: imageUrls[0], createdAt: '2m ago', isRead: false },
-  { id: '2', type: 'follow', user: users[3], text: 'started following you', createdAt: '15m ago', isRead: false },
-  { id: '3', type: 'comment', user: users[1], text: 'commented: "Amazing! 🔥"', postThumbnail: imageUrls[1], createdAt: '1h ago', isRead: false },
-  { id: '4', type: 'like', user: users[4], text: 'liked your post', postThumbnail: imageUrls[2], createdAt: '2h ago', isRead: true },
-  { id: '5', type: 'mention', user: users[5], text: 'mentioned you in a comment', postThumbnail: imageUrls[3], createdAt: '3h ago', isRead: true },
-  { id: '6', type: 'follow', user: users[6], text: 'started following you', createdAt: '5h ago', isRead: true },
-  { id: '7', type: 'like', user: users[2], text: 'liked your post', postThumbnail: imageUrls[4], createdAt: '8h ago', isRead: true },
-  { id: '8', type: 'comment', user: users[7], text: 'commented: "Love this!"', postThumbnail: imageUrls[5], createdAt: '1d ago', isRead: true },
+  { id: '1', type: 'like', userId: '1', text: 'liked your post', postThumbnail: imageUrls[0], createdAt: '2m ago', isRead: false },
+  { id: '2', type: 'follow', userId: '4', text: 'started following you', createdAt: '15m ago', isRead: false },
+  { id: '3', type: 'comment', userId: '2', text: 'commented: "Amazing! 🔥"', postThumbnail: imageUrls[1], createdAt: '1h ago', isRead: false },
+  { id: '4', type: 'like', userId: '5', text: 'liked your post', postThumbnail: imageUrls[2], createdAt: '2h ago', isRead: true },
+  { id: '5', type: 'mention', userId: '6', text: 'mentioned you in a comment', postThumbnail: imageUrls[3], createdAt: '3h ago', isRead: true },
+  { id: '6', type: 'follow', userId: '7', text: 'started following you', createdAt: '5h ago', isRead: true },
+  { id: '7', type: 'like', userId: '3', text: 'liked your post', postThumbnail: imageUrls[4], createdAt: '8h ago', isRead: true },
+  { id: '8', type: 'comment', userId: '8', text: 'commented: "Love this!"', postThumbnail: imageUrls[5], createdAt: '1d ago', isRead: true },
 ];
 
 export const messages: Message[] = [
-  { id: '1', user: users[0], lastMessage: 'Hey! Love your latest post 💕', timestamp: '2m', unread: 2 },
-  { id: '2', user: users[2], lastMessage: 'Are you coming to the event?', timestamp: '1h', unread: 0 },
-  { id: '3', user: users[4], lastMessage: 'Thanks for the collab! 🎨', timestamp: '3h', unread: 1 },
-  { id: '4', user: users[5], lastMessage: '😂😂😂', timestamp: '5h', unread: 0 },
-  { id: '5', user: users[6], lastMessage: 'Check out my new song!', timestamp: '1d', unread: 0 },
-  { id: '6', user: users[1], lastMessage: 'That restaurant was amazing!', timestamp: '2d', unread: 0 },
+  { id: '1', userId: '1', lastMessage: 'Hey! Love your latest post 💕', timestamp: '2m', unread: 2 },
+  { id: '2', userId: '3', lastMessage: 'Are you coming to the event?', timestamp: '1h', unread: 0 },
+  { id: '3', userId: '5', lastMessage: 'Thanks for the collab! 🎨', timestamp: '3h', unread: 1 },
+  { id: '4', userId: '6', lastMessage: '😂😂😂', timestamp: '5h', unread: 0 },
+  { id: '5', userId: '7', lastMessage: 'Check out my new song!', timestamp: '1d', unread: 0 },
+  { id: '6', userId: '2', lastMessage: 'That restaurant was amazing!', timestamp: '2d', unread: 0 },
 ];
 
-export const explorePosts: Post[] = [
-  ...posts,
-  { id: '9', user: users[0], type: 'image', mediaUrl: imageUrls[4], caption: 'Beach vibes 🏖️', likes: 34500, comments: 890, shares: 2300, saves: 5600, isLiked: false, isSaved: false, createdAt: '3d ago', tags: ['beach', 'summer'] },
-  { id: '10', user: users[3], type: 'image', mediaUrl: imageUrls[5], caption: 'Morning routine ☀️', likes: 12300, comments: 456, shares: 890, saves: 3400, isLiked: false, isSaved: false, createdAt: '3d ago', tags: ['morning', 'routine'] },
-  { id: '11', user: users[5], type: 'image', mediaUrl: imageUrls[6], caption: 'New look! 💇', likes: 89000, comments: 3400, shares: 12000, saves: 8900, isLiked: false, isSaved: false, createdAt: '4d ago', tags: ['fashion', 'style'] },
-  { id: '12', user: users[7], type: 'image', mediaUrl: imageUrls[7], caption: 'Setup tour 2024 🖥️', likes: 45600, comments: 1200, shares: 5600, saves: 7800, isLiked: false, isSaved: false, createdAt: '4d ago', tags: ['setup', 'tech'] },
-  { id: '13', user: users[1], type: 'image', mediaUrl: imageUrls[8], caption: 'Street food adventure 🌮', likes: 23400, comments: 780, shares: 1200, saves: 4500, isLiked: false, isSaved: false, createdAt: '5d ago', tags: ['streetfood', 'adventure'] },
-  { id: '14', user: users[4], type: 'image', mediaUrl: imageUrls[9], caption: 'Process video 🎬', likes: 67800, comments: 2100, shares: 8900, saves: 12300, isLiked: false, isSaved: false, createdAt: '5d ago', tags: ['process', 'art'] },
-  { id: '15', user: users[6], type: 'image', mediaUrl: imageUrls[10], caption: 'Behind the scenes 🎤', likes: 34500, comments: 890, shares: 4500, saves: 6700, isLiked: false, isSaved: false, createdAt: '6d ago', tags: ['bts', 'music'] },
-  { id: '16', user: users[2], type: 'image', mediaUrl: imageUrls[11], caption: 'Mountain views 🏔️', likes: 123000, comments: 4500, shares: 23000, saves: 34000, isLiked: false, isSaved: false, createdAt: '6d ago', tags: ['mountains', 'nature'] },
-];
+export const messageThreads: Record<string, ChatMessage[]> = {
+  '1': [
+    { id: '1-1', text: 'That dance challenge is insane 😳', fromMe: true, time: '10:28 AM' },
+    { id: '1-2', text: 'Took me three days to learn 😅', fromMe: false, time: '10:29 AM' },
+    { id: '1-3', text: 'Hey! Love your latest post 💕', fromMe: false, time: '10:30 AM' },
+  ],
+  '2': [
+    { id: '2-1', text: 'The Bali photos turned out so well 🌅', fromMe: true, time: '9:04 AM' },
+    { id: '2-2', text: 'Golden hour never misses', fromMe: false, time: '9:10 AM' },
+    { id: '2-3', text: 'Are you coming to the event?', fromMe: false, time: '9:12 AM' },
+  ],
+  '3': [
+    { id: '3-1', text: 'Sent you the layered file 🎨', fromMe: false, time: 'Yesterday' },
+    { id: '3-2', text: 'Got it, the palette is perfect', fromMe: true, time: 'Yesterday' },
+    { id: '3-3', text: 'Thanks for the collab! 🎨', fromMe: false, time: 'Yesterday' },
+  ],
+  '4': [
+    { id: '4-1', text: 'Your last sketch destroyed me 😂', fromMe: true, time: 'Yesterday' },
+    { id: '4-2', text: '😂😂😂', fromMe: false, time: 'Yesterday' },
+  ],
+  '5': [
+    { id: '5-1', text: 'Are you free to hear the demo?', fromMe: true, time: 'Monday' },
+    { id: '5-2', text: 'Check out my new song!', fromMe: false, time: 'Monday' },
+  ],
+  '6': [
+    { id: '6-1', text: 'That ramen spot you posted about 👀', fromMe: true, time: 'Sunday' },
+    { id: '6-2', text: 'That restaurant was amazing!', fromMe: false, time: 'Sunday' },
+  ],
+};
 
 export const trendingTags = [
   { tag: 'dance', posts: '2.3M' },

@@ -11,10 +11,13 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post, onCommentOpen, isFeedView = false }: PostCardProps) {
-  const { toggleLike, toggleSave } = useApp();
+  const { toggleLike, toggleSave, toggleFollow, currentUser, getUser } = useApp();
   const navigate = useNavigate();
   const [showHeart, setShowHeart] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const author = getUser(post.userId);
+  const isOwnPost = post.userId === currentUser.id;
 
   const handleDoubleTap = () => {
     if (!post.isLiked) {
@@ -29,6 +32,8 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toString();
   };
+
+  if (!author) return null;
 
   if (isFeedView) {
     return (
@@ -100,7 +105,7 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
 
           {/* Music disc */}
           <div className="w-10 h-10 rounded-full border-2 border-gray-600 overflow-hidden animate-spin-slow mt-2">
-            <img src={post.user.avatar} alt="music" className="w-full h-full object-cover" />
+            <img src={author.avatar} alt="music" className="w-full h-full object-cover" />
           </div>
         </div>
 
@@ -108,17 +113,26 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
         <div className="absolute bottom-20 left-3 right-16 z-10">
           <div className="flex items-center gap-2 mb-2">
             <img
-              src={post.user.avatar}
-              alt={post.user.username}
+              src={author.avatar}
+              alt={author.username}
               className="w-9 h-9 rounded-full object-cover border border-white/50"
             />
-            <span className="text-white font-bold text-sm">{post.user.username}</span>
-            {post.user.isVerified && (
+            <span className="text-white font-bold text-sm">{author.username}</span>
+            {author.isVerified && (
               <span className="bg-secondary text-black text-[10px] px-1 rounded font-bold">✓</span>
             )}
-            <button className="ml-2 px-3 py-0.5 border border-white/50 rounded text-white text-xs font-medium hover:bg-white/10">
-              Follow
-            </button>
+            {!isOwnPost && (
+              <button
+                onClick={() => toggleFollow(author.id)}
+                className={`ml-2 px-3 py-0.5 rounded text-xs font-medium transition-colors ${
+                  author.isFollowing
+                    ? 'bg-white/20 text-white hover:bg-white/30'
+                    : 'border border-white/50 text-white hover:bg-white/10'
+                }`}
+              >
+                {author.isFollowing ? 'Following' : 'Follow'}
+              </button>
+            )}
           </div>
           <p className="text-white text-sm mb-2 line-clamp-2">{post.caption}</p>
           {post.music && (
@@ -139,20 +153,20 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
       <div className="flex items-center justify-between p-3">
         <div className="flex items-center gap-2.5">
           <img
-            src={post.user.avatar}
-            alt={post.user.username}
+            src={author.avatar}
+            alt={author.username}
             className="w-9 h-9 rounded-full object-cover cursor-pointer"
-            onClick={() => navigate(`/profile/${post.user.id}`)}
+            onClick={() => navigate(`/profile/${post.userId}`)}
           />
           <div>
             <div className="flex items-center gap-1">
               <span
                 className="text-white text-sm font-semibold cursor-pointer hover:text-gray-300"
-                onClick={() => navigate(`/profile/${post.user.id}`)}
+                onClick={() => navigate(`/profile/${post.userId}`)}
               >
-                {post.user.username}
+                {author.username}
               </span>
-              {post.user.isVerified && (
+              {author.isVerified && (
                 <span className="text-secondary text-xs">✓</span>
               )}
             </div>
@@ -212,7 +226,7 @@ export default function PostCard({ post, onCommentOpen, isFeedView = false }: Po
       <div className="px-3 pb-3">
         <p className="text-white text-sm font-semibold">{formatCount(post.likes)} likes</p>
         <p className="text-white text-sm mt-1">
-          <span className="font-semibold">{post.user.username}</span>{' '}
+          <span className="font-semibold">{author.username}</span>{' '}
           <span className="text-gray-200">{post.caption}</span>
         </p>
         <button

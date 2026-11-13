@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 import { Notification } from '../data/mockData';
 
 export default function NotificationsPage() {
-  const { notifications, markNotificationRead, markAllNotificationsRead } = useApp();
+  const { notifications, markNotificationRead, markAllNotificationsRead, getUser } = useApp();
   const navigate = useNavigate();
 
   const unreadNotifications = notifications.filter(n => !n.isRead);
@@ -28,7 +28,10 @@ export default function NotificationsPage() {
     }
   };
 
-  const NotificationItem = ({ notification }: { notification: Notification }) => (
+  const NotificationItem = ({ notification }: { notification: Notification }) => {
+    const author = getUser(notification.userId);
+    if (!author) return null;
+    return (
     <div
       className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-dark-card/50 ${
         !notification.isRead ? 'bg-dark-card/30' : ''
@@ -36,14 +39,14 @@ export default function NotificationsPage() {
       onClick={() => {
         markNotificationRead(notification.id);
         if (notification.type === 'follow') {
-          navigate(`/profile/${notification.user.id}`);
+          navigate(`/profile/${notification.userId}`);
         }
       }}
     >
       <div className="relative flex-shrink-0">
         <img
-          src={notification.user.avatar}
-          alt={notification.user.username}
+          src={author.avatar}
+          alt={author.username}
           className="w-11 h-11 rounded-full object-cover"
         />
         <div className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center ${getIconBg(notification.type)}`}>
@@ -52,7 +55,7 @@ export default function NotificationsPage() {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm">
-          <span className="text-white font-semibold">{notification.user.username}</span>
+          <span className="text-white font-semibold">{author.username}</span>
           <span className="text-gray-200"> {notification.text}</span>
           <span className="text-gray-text ml-1">{notification.createdAt}</span>
         </p>
@@ -76,7 +79,8 @@ export default function NotificationsPage() {
         <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
       )}
     </div>
-  );
+    );
+  };
 
   return (
     <div className="h-full flex flex-col bg-black pb-16">

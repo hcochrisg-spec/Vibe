@@ -2,20 +2,19 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Settings, Grid3X3, Bookmark, Film, Heart, ChevronDown, UserPlus, MessageCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { currentUser, users, posts } from '../data/mockData';
 import PostCard from '../components/PostCard';
 import CommentsModal from '../components/CommentsModal';
 
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { toggleFollow, toggleLike, toggleSave } = useApp();
+  const { toggleFollow, currentUser, users, posts } = useApp();
   const [activeTab, setActiveTab] = useState<'posts' | 'saved' | 'tagged'>('posts');
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsPostId, setCommentsPostId] = useState<string | null>(null);
 
   const isOwnProfile = !userId || userId === 'current';
   const user = isOwnProfile ? currentUser : users.find(u => u.id === userId) || currentUser;
-  const userPosts = isOwnProfile ? posts.slice(0, 6) : posts.filter(p => p.user.id === user.id);
+  const userPosts = posts.filter(p => p.userId === user.id);
 
   const formatCount = (num: number): string => {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -189,7 +188,7 @@ export default function ProfilePage() {
             <div
               key={post.id}
               className="aspect-square relative cursor-pointer group"
-              onClick={() => setCommentsOpen(true)}
+              onClick={() => setCommentsPostId(post.id)}
             >
               <img
                 src={post.mediaUrl}
@@ -214,7 +213,11 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <CommentsModal isOpen={commentsOpen} onClose={() => setCommentsOpen(false)} />
+      <CommentsModal
+        isOpen={commentsPostId !== null}
+        postId={commentsPostId}
+        onClose={() => setCommentsPostId(null)}
+      />
     </div>
   );
 }

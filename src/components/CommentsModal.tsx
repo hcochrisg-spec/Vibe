@@ -3,20 +3,23 @@ import { X, Heart } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 interface CommentsModalProps {
+  postId: string | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function CommentsModal({ isOpen, onClose }: CommentsModalProps) {
-  const { comments, toggleCommentLike, addComment } = useApp();
+export default function CommentsModal({ postId, isOpen, onClose }: CommentsModalProps) {
+  const { comments, toggleCommentLike, addComment, getUser } = useApp();
   const [newComment, setNewComment] = useState('');
 
-  if (!isOpen) return null;
+  if (!isOpen || !postId) return null;
+
+  const postComments = comments.filter(comment => comment.postId === postId);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newComment.trim()) {
-      addComment(newComment.trim());
+      addComment(postId, newComment.trim());
       setNewComment('');
     }
   };
@@ -35,36 +38,45 @@ export default function CommentsModal({ isOpen, onClose }: CommentsModalProps) {
 
         {/* Comments list */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 hide-scrollbar">
-          {comments.map(comment => (
-            <div key={comment.id} className="flex gap-3">
-              <img
-                src={comment.user.avatar}
-                alt={comment.user.username}
-                className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-white text-sm font-semibold">{comment.user.username}</span>
-                  <span className="text-gray-text text-xs">{comment.createdAt}</span>
-                </div>
-                <p className="text-gray-200 text-sm mt-0.5">{comment.text}</p>
-                <div className="flex items-center gap-4 mt-1">
-                  <button className="text-gray-text text-xs hover:text-white">Reply</button>
-                  <button className="text-gray-text text-xs hover:text-white">View replies</button>
-                </div>
-              </div>
-              <button
-                onClick={() => toggleCommentLike(comment.id)}
-                className="flex flex-col items-center gap-0.5 pt-2"
-              >
-                <Heart
-                  size={14}
-                  className={comment.isLiked ? 'text-primary fill-primary' : 'text-gray-text'}
+          {postComments.length === 0 && (
+            <p className="text-gray-text text-sm text-center py-8">
+              No comments yet. Be the first to comment.
+            </p>
+          )}
+          {postComments.map(comment => {
+            const author = getUser(comment.userId);
+            if (!author) return null;
+            return (
+              <div key={comment.id} className="flex gap-3">
+                <img
+                  src={author.avatar}
+                  alt={author.username}
+                  className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                 />
-                <span className="text-[10px] text-gray-text">{comment.likes}</span>
-              </button>
-            </div>
-          ))}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white text-sm font-semibold">{author.username}</span>
+                    <span className="text-gray-text text-xs">{comment.createdAt}</span>
+                  </div>
+                  <p className="text-gray-200 text-sm mt-0.5">{comment.text}</p>
+                  <div className="flex items-center gap-4 mt-1">
+                    <button className="text-gray-text text-xs hover:text-white">Reply</button>
+                    <button className="text-gray-text text-xs hover:text-white">View replies</button>
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleCommentLike(comment.id)}
+                  className="flex flex-col items-center gap-0.5 pt-2"
+                >
+                  <Heart
+                    size={14}
+                    className={comment.isLiked ? 'text-primary fill-primary' : 'text-gray-text'}
+                  />
+                  <span className="text-[10px] text-gray-text">{comment.likes}</span>
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Input */}

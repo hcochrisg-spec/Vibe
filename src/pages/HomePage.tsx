@@ -10,7 +10,7 @@ export default function HomePage() {
   const { posts } = useApp();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'following' | 'foryou'>('foryou');
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsPostId, setCommentsPostId] = useState<string | null>(null);
 
   return (
     <div className="h-full flex flex-col bg-black">
@@ -52,14 +52,18 @@ export default function HomePage() {
           <div key={post.id} className="w-full snap-start snap-always">
             <PostCard
               post={post}
-              onCommentOpen={() => setCommentsOpen(true)}
+              onCommentOpen={setCommentsPostId}
               isFeedView={true}
             />
           </div>
         ))}
       </div>
 
-      <CommentsModal isOpen={commentsOpen} onClose={() => setCommentsOpen(false)} />
+      <CommentsModal
+        isOpen={commentsPostId !== null}
+        postId={commentsPostId}
+        onClose={() => setCommentsPostId(null)}
+      />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useApp } from '../context/AppContext';
 
 export default function CreatePage() {
   const navigate = useNavigate();
-  const { currentUser } = useApp();
+  const { currentUser, addPost } = useApp();
   const [activeTab, setActiveTab] = useState<'post' | 'reel' | 'story'>('post');
   const [caption, setCaption] = useState('');
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
@@ -20,11 +20,16 @@ export default function CreatePage() {
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
   ];
 
+  const canShare = Boolean(selectedMedia);
+
   const handlePost = () => {
-    if (selectedMedia || caption) {
-      alert('Post created! 🎉');
-      navigate('/');
-    }
+    if (!selectedMedia) return;
+    addPost({
+      mediaUrl: selectedMedia,
+      caption: caption.trim(),
+      type: activeTab === 'reel' ? 'video' : 'image',
+    });
+    navigate('/');
   };
 
   return (
@@ -51,7 +56,8 @@ export default function CreatePage() {
         </div>
         <button
           onClick={handlePost}
-          className="text-primary font-semibold text-sm"
+          disabled={!canShare}
+          className="text-primary font-semibold text-sm disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Share
         </button>

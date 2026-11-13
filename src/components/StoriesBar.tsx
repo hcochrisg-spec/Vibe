@@ -1,10 +1,17 @@
-import { stories as initialStories } from '../data/mockData';
+import { stories as initialStories, users, currentUser } from '../data/mockData';
 import { Plus } from 'lucide-react';
 
 export default function StoriesBar() {
+  const stories = initialStories.flatMap(story => {
+    const user = story.userId === currentUser.id
+      ? currentUser
+      : users.find(candidate => candidate.id === story.userId);
+    return user ? [{ ...story, user }] : [];
+  });
+
   return (
     <div className="flex gap-3 px-4 py-3 overflow-x-auto hide-scrollbar border-b border-dark-border">
-      {initialStories.map((story, index) => (
+      {stories.map((story, index) => (
         <div key={story.id} className="flex flex-col items-center gap-1 flex-shrink-0">
           <div className={`relative ${index === 0 ? '' : 'story-ring'}`}>
             {index === 0 ? (

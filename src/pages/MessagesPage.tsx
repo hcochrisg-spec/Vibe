@@ -2,31 +2,33 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Edit, Phone, Video, Send, Image, Mic, Heart } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { currentUser, users } from '../data/mockData';
 
 export default function MessagesPage() {
-  const { messages: messageList } = useApp();
+  const {
+    currentUser,
+    getUser,
+    messages: messageList,
+    messageThreads,
+    openConversation,
+    sendMessage,
+  } = useApp();
   const navigate = useNavigate();
   const [selectedChat, setSelectedChat] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
-  const [chatMessages, setChatMessages] = useState<Array<{ id: string; text: string; fromMe: boolean; time: string }>>([
-    { id: '1', text: 'Hey! How are you?', fromMe: false, time: '10:30 AM' },
-    { id: '2', text: "I'm good! Just saw your latest post 🔥", fromMe: true, time: '10:31 AM' },
-    { id: '3', text: 'Thanks! Took me forever to edit 😅', fromMe: false, time: '10:32 AM' },
-    { id: '4', text: 'It looks amazing though!', fromMe: true, time: '10:33 AM' },
-    { id: '5', text: 'We should collab sometime!', fromMe: false, time: '10:35 AM' },
-  ]);
 
-  const selectedUser = selectedChat ? users.find(u => u.id === selectedChat) : null;
+  const conversations = messageList.flatMap(message => {
+    const author = getUser(message.userId);
+    return author ? [{ ...message, author }] : [];
+  });
+  const selectedConversation = selectedChat
+    ? conversations.find(message => message.id === selectedChat) ?? null
+    : null;
+  const selectedUser = selectedConversation?.author ?? null;
+  const thread = selectedChat ? messageThreads[selectedChat] ?? [] : [];
 
   const handleSend = () => {
-    if (messageText.trim()) {
-      setChatMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        text: messageText,
-        fromMe: true,
-        time: 'Now',
-      }]);
+    if (selectedChat && messageText.trim()) {
+      sendMessage(selectedChat, messageText);
       setMessageText('');
     }
   };
@@ -67,7 +69,13 @@ export default function MessagesPage() {
             </button>
           </div>
 
-          {chatMessages.map(msg => (
+          {thread.length === 0 && (
+            <p className="text-gray-text text-sm text-center py-6">
+              No messages yet. Say hello 👋
+            </p>
+          )}
+
+          {thread.map(msg => (
             <div key={msg.id} className={`flex ${msg.fromMe ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
                 msg.fromMe
@@ -143,22 +151,25 @@ export default function MessagesPage() {
           <span className="text-secondary text-sm">Requests</span>
         </div>
 
-        {messageList.map(msg => (
+        {conversations.map(msg => (
           <div
             key={msg.id}
-            onClick={() => setSelectedChat(msg.user.id)}
+            onClick={() => {
+              setSelectedChat(msg.id);
+              openConversation(msg.id);
+            }}
             className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-dark-card/50 transition-colors"
           >
             <div className="relative flex-shrink-0">
-              <img src={msg.user.avatar} alt="" className="w-14 h-14 rounded-full object-cover" />
+              <img src={msg.author.avatar} alt="" className="w-14 h-14 rounded-full object-cover" />
               <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-black" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
                 <span className={`text-sm ${msg.unread > 0 ? 'text-white font-bold' : 'text-white'}`}>
-                  {msg.user.username}
+                  {msg.author.username}
                 </span>
-                {msg.user.isVerified && <span className="text-secondary text-xs">✓</span>}
+                {msg.author.isVerified && <span className="text-secondary text-xs">✓</span>}
               </div>
               <div className="flex items-center gap-1">
                 <span className={`text-sm truncate ${msg.unread > 0 ? 'text-white font-medium' : 'text-gray-text'}`}>
